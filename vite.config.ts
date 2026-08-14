@@ -9,6 +9,16 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  server: {
+    port: 4200,
+    proxy: {
+      '/legacy-app': {
+        target: 'http://localhost:4201',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/legacy-app/, ''),
+      },
+    },
+  },
   build: {
     target: 'es2022',
     rollupOptions: {

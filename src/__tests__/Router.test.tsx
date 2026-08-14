@@ -4,6 +4,8 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy, type ReactNode } from 'react';
 import { RouteErrorBoundary } from '../components/RouteErrorBoundary';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { LegacyRoute } from '../legacy-bridge/LegacyRoute';
+import { LegacyRedirect } from '../legacy-bridge/LegacyRedirect';
 
 function SuspenseRoute({ children }: { children: ReactNode }): ReactNode {
   return (
@@ -15,10 +17,16 @@ function SuspenseRoute({ children }: { children: ReactNode }): ReactNode {
 
 const Dashboard = lazy(() => import('../routes/migrated/Dashboard'));
 const Settings = lazy(() => import('../routes/migrated/Settings'));
-const LegacyPlaceholder = lazy(
-  () => import('../routes/legacy/LegacyPlaceholder'),
-);
 const NotFound = lazy(() => import('../routes/NotFound'));
+
+function LegacyFallback(): ReactNode {
+  return (
+    <>
+      <LegacyRedirect />
+      <NotFound />
+    </>
+  );
+}
 
 function renderWithRouter(initialRoute: string) {
   const routes = [
@@ -41,16 +49,16 @@ function renderWithRouter(initialRoute: string) {
     {
       path: '/legacy/*',
       element: (
-        <SuspenseRoute>
-          <LegacyPlaceholder />
-        </SuspenseRoute>
+        <RouteErrorBoundary>
+          <LegacyRoute />
+        </RouteErrorBoundary>
       ),
     },
     {
       path: '*',
       element: (
         <SuspenseRoute>
-          <NotFound />
+          <LegacyFallback />
         </SuspenseRoute>
       ),
     },
@@ -82,11 +90,24 @@ describe('Router', () => {
     });
   });
 
-  it('renders LegacyPlaceholder for /legacy/* paths', async () => {
-    renderWithRouter('/legacy/expenses');
+  it('renders legacy iframe for /legacy/* paths with known routes', async () => {
+    renderWithRouter('/legacy/dashboard');
     await waitFor(() => {
-      expect(screen.getByText('Legacy Route')).toBeInTheDocument();
-      expect(screen.getByText(/expenses/)).toBeInTheDocument();
+      expect(screen.getByTitle('Dashboard')).toBeInTheDocument();
+    });
+  });
+
+  it('shows error for unrecognized /legacy/* paths', async () => {
+    renderWithRouter('/legacy/unknown');
+    await waitFor(() => {
+      expect(screen.getByText('Legacy route not found')).toBeInTheDocument();
+    });
+  });
+
+  it('redirects known legacy paths to /legacy/*', async () => {
+    renderWithRouter('/import-expenses');
+    await waitFor(() => {
+      expect(screen.getByTitle('Import Expenses')).toBeInTheDocument();
     });
   });
 

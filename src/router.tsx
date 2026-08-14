@@ -7,10 +7,11 @@ import {
 import { Shell } from './Shell';
 import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { LegacyRoute } from './legacy-bridge/LegacyRoute';
+import { LegacyRedirect } from './legacy-bridge/LegacyRedirect';
 
 const Dashboard = lazy(() => import('./routes/migrated/Dashboard'));
 const Settings = lazy(() => import('./routes/migrated/Settings'));
-const LegacyPlaceholder = lazy(() => import('./routes/legacy/LegacyPlaceholder'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 
 function SuspenseRoute({ children }: { children: ReactNode }): ReactNode {
@@ -46,12 +47,21 @@ const legacyRoutes: RouteObject[] = [
   {
     path: 'legacy/*',
     element: (
-      <SuspenseRoute>
-        <LegacyPlaceholder />
-      </SuspenseRoute>
+      <RouteErrorBoundary>
+        <LegacyRoute />
+      </RouteErrorBoundary>
     ),
   },
 ];
+
+function LegacyFallback(): ReactNode {
+  return (
+    <>
+      <LegacyRedirect />
+      <NotFound />
+    </>
+  );
+}
 
 const routes: RouteObject[] = [
   {
@@ -64,7 +74,7 @@ const routes: RouteObject[] = [
         path: '*',
         element: (
           <SuspenseRoute>
-            <NotFound />
+            <LegacyFallback />
           </SuspenseRoute>
         ),
       },
