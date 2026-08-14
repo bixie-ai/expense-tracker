@@ -1,5 +1,7 @@
 {
   "singleQuote": true,
-  "printWidth": 120,
-  "bracketSameLine": true
+  "trailingComma": "all",
+  "printWidth": 90,
+  "semi": true,
+  "tabWidth": 2
 }

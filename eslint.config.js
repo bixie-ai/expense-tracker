@@ -1,42 +1,39 @@
-// @ts-check
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
-const prettier = require('eslint-config-prettier');
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import prettier from 'eslint-config-prettier';
+import globals from 'globals';
 
-module.exports = tseslint.config(
+export default tseslint.config(
+  { ignores: ['dist'] },
   {
-    files: ['**/*.ts'],
+    files: ['**/*.{ts,tsx}'],
     extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      ...tseslint.configs.stylistic,
-      ...angular.configs.tsRecommended,
+      js.configs.recommended,
+      ...tseslint.configs.strictTypeChecked,
       prettier,
     ],
-    processor: angular.processInlineTemplates,
-    rules: {
-      '@angular-eslint/directive-selector': [
-        'error',
-        {
-          type: 'attribute',
-          prefix: 'app',
-          style: 'camelCase',
-        },
-      ],
-      '@angular-eslint/component-selector': [
-        'error',
-        {
-          type: 'element',
-          prefix: 'app',
-          style: 'kebab-case',
-        },
-      ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
-  },
-  {
-    files: ['**/*.html'],
-    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-    rules: {},
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true, allowExportNames: ['router'] },
+      ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+    },
   },
 );
