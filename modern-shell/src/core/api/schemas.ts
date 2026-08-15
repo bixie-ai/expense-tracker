@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+export const EXPENSE_CATEGORIES = [
+  'Food',
+  'Transport',
+  'Shopping',
+  'Entertainment',
+  'Bills',
+  'Health',
+  'Education',
+  'Travel',
+  'Other',
+] as const;
+
 export const ExpenseSchema = z.object({
   id: z.string().optional(),
   name: z.string(),
@@ -17,6 +29,20 @@ export type ExpenseDto = z.infer<typeof ExpenseSchema>;
 export const ExpenseInputSchema = ExpenseSchema.omit({ id: true });
 
 export type ExpenseInputDto = z.infer<typeof ExpenseInputSchema>;
+
+export const ExpenseFormSchema = z.object({
+  name: z.string().min(1, 'Description is required'),
+  amount: z
+    .number({ error: 'Amount must be a number' })
+    .positive('Amount must be greater than zero'),
+  date: z.string().min(1, 'Date is required'),
+  category: z.enum(EXPENSE_CATEGORIES, {
+    error: 'Please select a category',
+  }),
+  comments: z.string().optional(),
+});
+
+export type ExpenseFormValues = z.infer<typeof ExpenseFormSchema>;
 
 export const UserDetailsSchema = z.object({
   firstName: z.string(),

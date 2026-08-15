@@ -4,6 +4,7 @@ export interface RouteEntry {
   path: string;
   status: RouteStatus;
   angularPath?: string;
+  featureFlag?: string;
 }
 
 export const routeConfig: ReadonlyArray<RouteEntry> = [
@@ -11,6 +12,7 @@ export const routeConfig: ReadonlyArray<RouteEntry> = [
   { path: 'dashboard', status: 'legacy', angularPath: '/dashboard' },
   { path: 'settings', status: 'legacy', angularPath: '/settings' },
   { path: 'new-expense', status: 'legacy', angularPath: '/new-expense' },
+  { path: 'log-expense', status: 'migrated', featureFlag: 'log_expense_react' },
   { path: 'import-expenses', status: 'legacy', angularPath: '/import-expenses' },
 ];
 
