@@ -6,6 +6,10 @@ import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { Expense } from '../interfaces/expense-model';
 import { UserDetails } from '../interfaces/user-details';
 
+/**
+ * @deprecated Use ExpenseRepository and UserRepository from core/repositories instead.
+ * This service is retained as a thin adapter for legacy Angular consumers.
+ */
 @Injectable({
   providedIn: 'root',
 })
