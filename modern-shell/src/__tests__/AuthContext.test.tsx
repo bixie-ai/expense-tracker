@@ -20,6 +20,10 @@ vi.mock('firebase/auth', () => ({
   signOut: (...args: unknown[]) => mockSignOut(...args),
 }));
 
+vi.mock('firebase/database', () => ({
+  getDatabase: vi.fn(() => ({})),
+}));
+
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 function TestConsumer() {
