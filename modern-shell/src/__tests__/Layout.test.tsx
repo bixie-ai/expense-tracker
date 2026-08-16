@@ -58,9 +58,10 @@ describe('LayoutComponent', () => {
 
   it('renders navigation links in sidebar', () => {
     renderLayout('/');
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Import Expenses')).toBeInTheDocument();
+    const nav = screen.getByRole('navigation', { name: 'Main navigation' });
+    expect(nav).toHaveTextContent('Dashboard');
+    expect(nav).toHaveTextContent('Settings');
+    expect(nav).toHaveTextContent('Import Expenses');
   });
 
   it('renders different child routes correctly', () => {

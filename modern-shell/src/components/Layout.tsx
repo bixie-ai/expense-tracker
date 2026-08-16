@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { LayoutProvider, useLayout } from '../contexts/LayoutContext';
+import { FooterLinks } from './FooterLinks';
 import { Sidebar } from './Sidebar';
 import { Toolbar } from './Toolbar';
 
@@ -40,9 +41,14 @@ function LayoutShell() {
             p: 2,
             height: 'calc(100dvh - 64px)',
             boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          <Outlet />
+          <Box sx={{ flex: 1 }}>
+            <Outlet />
+          </Box>
+          <FooterLinks />
         </Box>
       </Box>
     </Box>

@@ -2,6 +2,8 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { FileUploadZone } from './FileUploadZone/FileUploadZone';
 export type { FileUploadZoneProps } from './FileUploadZone/FileUploadZone';
 export { Footer } from './Footer';
+export { FooterLinks } from './FooterLinks';
+export type { FooterLinksProps, NavLink, SocialLink } from './FooterLinks';
 export { LayoutComponent } from './Layout';
 export { LegacyBridge } from './LegacyBridge';
 export { ParityTest } from './ParityTest';
