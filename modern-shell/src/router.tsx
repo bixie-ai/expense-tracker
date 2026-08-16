@@ -11,6 +11,10 @@ const LegacyBridge = lazy(() =>
   import('./components/LegacyBridge').then((m) => ({ default: m.LegacyBridge }))
 );
 
+const LayoutComponent = lazy(() =>
+  import('./components/Layout').then((m) => ({ default: m.LayoutComponent }))
+);
+
 const Home = lazy(() =>
   import('./pages/Home').then((m) => ({ default: m.Home }))
 );
@@ -74,19 +78,57 @@ const legacyCatchAll: RouteObject = {
   ),
 };
 
-export const router = createBrowserRouter([
-  ...buildMigratedRoutes(),
-  ...buildLegacyRoutes(),
-  {
-    path: '/',
+function buildLayoutRoute(): RouteObject {
+  const useLayout = isFeatureEnabled('layout_component_v2');
+
+  if (!useLayout) {
+    return {
+      children: [
+        ...buildMigratedRoutes(),
+        ...buildLegacyRoutes(),
+        {
+          path: '/',
+          element: (
+            <ErrorBoundary>
+              <Suspense fallback={<SuspenseFallback />}>
+                <Home />
+              </Suspense>
+            </ErrorBoundary>
+          ),
+        },
+        legacyCatchAll,
+      ],
+    };
+  }
+
+  return {
     element: (
       <ErrorBoundary>
         <Suspense fallback={<SuspenseFallback />}>
-          <Home />
+          <LayoutComponent />
         </Suspense>
       </ErrorBoundary>
     ),
-  },
+    children: [
+      ...buildMigratedRoutes(),
+      ...buildLegacyRoutes(),
+      {
+        path: '/',
+        element: (
+          <ErrorBoundary>
+            <Suspense fallback={<SuspenseFallback />}>
+              <Home />
+            </Suspense>
+          </ErrorBoundary>
+        ),
+      },
+      legacyCatchAll,
+    ],
+  };
+}
+
+export const router = createBrowserRouter([
+  buildLayoutRoute(),
   {
     path: '/login',
     element: (
@@ -97,5 +139,4 @@ export const router = createBrowserRouter([
       </ErrorBoundary>
     ),
   },
-  legacyCatchAll,
 ]);
