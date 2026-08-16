@@ -13,7 +13,7 @@ export const routeConfig: ReadonlyArray<RouteEntry> = [
   { path: 'settings', status: 'legacy', angularPath: '/settings' },
   { path: 'new-expense', status: 'legacy', angularPath: '/new-expense' },
   { path: 'log-expense', status: 'migrated', featureFlag: 'log_expense_react' },
-  { path: 'import-expenses', status: 'legacy', angularPath: '/import-expenses' },
+  { path: 'import-expenses', status: 'migrated', featureFlag: 'import_expenses_react' },
 ];
 
 export function getLegacyRoutes(): ReadonlyArray<RouteEntry> {

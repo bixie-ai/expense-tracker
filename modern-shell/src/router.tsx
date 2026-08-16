@@ -27,8 +27,13 @@ const ExpenseForm = lazy(() =>
   import('./components/expenses/ExpenseForm').then((m) => ({ default: m.ExpenseForm }))
 );
 
+const ImportExpenses = lazy(() =>
+  import('./pages/ImportExpenses').then((m) => ({ default: m.ImportExpenses }))
+);
+
 const migratedComponents: Record<string, React.LazyExoticComponent<React.ComponentType>> = {
   'log-expense': ExpenseForm,
+  'import-expenses': ImportExpenses,
 };
 
 function isFeatureEnabled(flag?: string): boolean {
