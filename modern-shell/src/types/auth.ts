@@ -9,6 +9,7 @@ export interface AuthContextType {
   user: FirebaseUser | null;
   userDetails: UserDetails | null;
   loading: boolean;
+  error: string | null;
   logIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
