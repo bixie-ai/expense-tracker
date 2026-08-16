@@ -27,7 +27,7 @@ vi.mock('firebase/database', () => ({
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 function TestConsumer() {
-  const { user, userDetails, loading } = useAuth();
+  const { user, userDetails, loading, error } = useAuth();
   return (
     <div>
       <span data-testid="loading">{String(loading)}</span>
@@ -35,6 +35,7 @@ function TestConsumer() {
       <span data-testid="userDetails">
         {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : 'null'}
       </span>
+      <span data-testid="error">{error || 'null'}</span>
     </div>
   );
 }
@@ -91,6 +92,11 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('user').textContent).toBe('null');
     });
 
+    it('should have null error state initially', () => {
+      renderWithProvider(<TestConsumer />);
+      expect(screen.getByTestId('error').textContent).toBe('null');
+    });
+
     it('should set user when auth state resolves with a user', () => {
       const mockUser = { uid: 'user-123', email: 'test@test.com' };
       mockOnAuthStateChanged.mockImplementation((_auth: unknown, callback: (user: unknown) => void) => {
@@ -144,6 +150,63 @@ describe('AuthContext', () => {
       );
     });
 
+    it('should set loading to true during logIn', async () => {
+      let resolveLogin: (value: unknown) => void = () => {};
+      mockSignInWithEmailAndPassword.mockImplementation(() => new Promise((resolve) => {
+        resolveLogin = resolve;
+      }));
+
+      renderWithProvider(
+        <>
+          <TestConsumer />
+          <AuthActionsConsumer />
+        </>
+      );
+
+      expect(screen.getByTestId('loading').textContent).toBe('false');
+
+      act(() => {
+        screen.getByText('Log In').click();
+      });
+      expect(screen.getByTestId('loading').textContent).toBe('true');
+
+      await act(async () => {
+        resolveLogin({ user: { uid: 'user-123' } });
+      });
+      expect(screen.getByTestId('loading').textContent).toBe('false');
+    });
+
+    it('should set error state on login failure', async () => {
+      const error = new Error('auth/user-not-found');
+      mockSignInWithEmailAndPassword.mockRejectedValueOnce(error);
+
+      function ErrorCapture() {
+        const { logIn, error } = useAuth();
+        return (
+          <div>
+            <button
+              onClick={async () => {
+                try {
+                  await logIn('test@test.com', 'wrong');
+                } catch (_e) {
+                  // error is captured in context state
+                }
+              }}
+            >
+              Try Login
+            </button>
+            <span data-testid="ctx-error">{error || 'null'}</span>
+          </div>
+        );
+      }
+
+      renderWithProvider(<ErrorCapture />);
+      await act(async () => {
+        screen.getByText('Try Login').click();
+      });
+      expect(screen.getByTestId('ctx-error').textContent).toBe('auth/user-not-found');
+    });
+
     it('should propagate errors from signInWithEmailAndPassword', async () => {
       const error = new Error('auth/wrong-password');
       mockSignInWithEmailAndPassword.mockRejectedValueOnce(error);
@@ -175,6 +238,46 @@ describe('AuthContext', () => {
       });
       expect(screen.getByTestId('error').textContent).toBe('auth/wrong-password');
     });
+
+    it('should clear error on subsequent login attempt', async () => {
+      const error = new Error('auth/wrong-password');
+      mockSignInWithEmailAndPassword.mockRejectedValueOnce(error);
+      mockSignInWithEmailAndPassword.mockResolvedValueOnce({
+        user: { uid: 'user-123' },
+      });
+
+      function ErrorCapture() {
+        const { logIn, error } = useAuth();
+        return (
+          <div>
+            <button
+              onClick={async () => {
+                try {
+                  await logIn('test@test.com', 'password');
+                } catch (_e) {
+                  // expected on first call
+                }
+              }}
+            >
+              Try Login
+            </button>
+            <span data-testid="ctx-error">{error || 'null'}</span>
+          </div>
+        );
+      }
+
+      renderWithProvider(<ErrorCapture />);
+
+      await act(async () => {
+        screen.getByText('Try Login').click();
+      });
+      expect(screen.getByTestId('ctx-error').textContent).toBe('auth/wrong-password');
+
+      await act(async () => {
+        screen.getByText('Try Login').click();
+      });
+      expect(screen.getByTestId('ctx-error').textContent).toBe('null');
+    });
   });
 
   describe('signUp', () => {
@@ -188,6 +291,63 @@ describe('AuthContext', () => {
         'new@test.com',
         'password123'
       );
+    });
+
+    it('should set loading to true during signUp', async () => {
+      let resolveSignUp: (value: unknown) => void = () => {};
+      mockCreateUserWithEmailAndPassword.mockImplementation(() => new Promise((resolve) => {
+        resolveSignUp = resolve;
+      }));
+
+      renderWithProvider(
+        <>
+          <TestConsumer />
+          <AuthActionsConsumer />
+        </>
+      );
+
+      expect(screen.getByTestId('loading').textContent).toBe('false');
+
+      act(() => {
+        screen.getByText('Sign Up').click();
+      });
+      expect(screen.getByTestId('loading').textContent).toBe('true');
+
+      await act(async () => {
+        resolveSignUp({ user: { uid: 'new-user-456' } });
+      });
+      expect(screen.getByTestId('loading').textContent).toBe('false');
+    });
+
+    it('should set error state on signUp failure', async () => {
+      const error = new Error('auth/email-already-in-use');
+      mockCreateUserWithEmailAndPassword.mockRejectedValueOnce(error);
+
+      function ErrorCapture() {
+        const { signUp, error } = useAuth();
+        return (
+          <div>
+            <button
+              onClick={async () => {
+                try {
+                  await signUp('new@test.com', 'password');
+                } catch (_e) {
+                  // error captured in context
+                }
+              }}
+            >
+              Try SignUp
+            </button>
+            <span data-testid="ctx-error">{error || 'null'}</span>
+          </div>
+        );
+      }
+
+      renderWithProvider(<ErrorCapture />);
+      await act(async () => {
+        screen.getByText('Try SignUp').click();
+      });
+      expect(screen.getByTestId('ctx-error').textContent).toBe('auth/email-already-in-use');
     });
 
     it('should propagate errors from createUserWithEmailAndPassword', async () => {

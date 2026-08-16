@@ -15,6 +15,10 @@ const Home = lazy(() =>
   import('./pages/Home').then((m) => ({ default: m.Home }))
 );
 
+const LoginPage = lazy(() =>
+  import('./pages/LoginPage').then((m) => ({ default: m.LoginPage }))
+);
+
 const ExpenseForm = lazy(() =>
   import('./components/expenses/ExpenseForm').then((m) => ({ default: m.ExpenseForm }))
 );
@@ -79,6 +83,16 @@ export const router = createBrowserRouter([
       <ErrorBoundary>
         <Suspense fallback={<SuspenseFallback />}>
           <Home />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: '/login',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<SuspenseFallback />}>
+          <LoginPage />
         </Suspense>
       </ErrorBoundary>
     ),

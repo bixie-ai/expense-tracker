@@ -21,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -34,11 +35,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function logIn(email: string, password: string): Promise<void> {
-    await signInWithEmailAndPassword(auth, email, password);
+    setError(null);
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Login failed';
+      setError(message);
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function signUp(email: string, password: string): Promise<void> {
-    await createUserWithEmailAndPassword(auth, email, password);
+    setError(null);
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Sign up failed';
+      setError(message);
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function signOut(): Promise<void> {
@@ -51,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     userDetails,
     loading,
+    error,
     logIn,
     signUp,
     signOut,
