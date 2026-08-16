@@ -9,7 +9,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.{ts,html,scss,json,md}\"",
-    "deploy": "ng build && firebase deploy"
+    "deploy": "ng build && firebase deploy",
+    "test:parity": "playwright test --config=tests/parity/playwright.config.ts",
+    "test:parity:update": "playwright test --config=tests/parity/playwright.config.ts --update-snapshots"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +42,7 @@
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
+    "@playwright/test": "^1.62.1",
     "@types/jasmine": "~5.1.0",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.10.2",

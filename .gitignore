@@ -44,3 +44,9 @@ Thumbs.db
 
 # firebase
 .firebase
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/tests/parity/*-snapshots/
