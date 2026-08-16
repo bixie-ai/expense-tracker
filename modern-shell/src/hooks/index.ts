@@ -5,3 +5,5 @@ export type { BreakpointKey } from './useBreakpoint';
 export { useExpenses, useUpdateExpense, useDeleteExpense, expenseKeys } from './expenses';
 export { useDragAndDrop } from './useDragAndDrop';
 export type { UseDragAndDropOptions, UseDragAndDropReturn } from './useDragAndDrop';
+export { useCsvExport } from './use-csv-export';
+export type { UseCsvExportOptions, UseCsvExportReturn } from './use-csv-export';
