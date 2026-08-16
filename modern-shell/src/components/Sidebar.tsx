@@ -16,7 +16,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { useLayout } from '../contexts/LayoutContext';
-import { Footer } from './Footer';
+import { FooterLinks } from './FooterLinks';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
@@ -113,7 +113,7 @@ export function Sidebar() {
       </List>
       {!compactMode && (
         <Box sx={{ p: 1 }}>
-          <Footer />
+          <FooterLinks navLinks={[]} />
         </Box>
       )}
     </Box>
