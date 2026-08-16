@@ -1,5 +1,9 @@
 export { ErrorBoundary } from './ErrorBoundary';
+export { Footer } from './Footer';
+export { LayoutComponent } from './Layout';
 export { LegacyBridge } from './LegacyBridge';
 export { ParityTest } from './ParityTest';
 export { ProtectedRoute } from './ProtectedRoute';
+export { Sidebar } from './Sidebar';
 export { SuspenseFallback } from './SuspenseFallback';
+export { Toolbar } from './Toolbar';
