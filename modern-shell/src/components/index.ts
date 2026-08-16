@@ -1,4 +1,6 @@
 export { ErrorBoundary } from './ErrorBoundary';
+export { FileUploadZone } from './FileUploadZone/FileUploadZone';
+export type { FileUploadZoneProps } from './FileUploadZone/FileUploadZone';
 export { Footer } from './Footer';
 export { LayoutComponent } from './Layout';
 export { LegacyBridge } from './LegacyBridge';
