@@ -23,6 +23,14 @@ const LoginPage = lazy(() =>
   import('./pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
 
+const Dashboard = lazy(() =>
+  import('./pages/Dashboard').then((m) => ({ default: m.Dashboard }))
+);
+
+const ExpenseEntry = lazy(() =>
+  import('./pages/ExpenseEntry').then((m) => ({ default: m.ExpenseEntry }))
+);
+
 const ExpenseForm = lazy(() =>
   import('./components/expenses/ExpenseForm').then((m) => ({ default: m.ExpenseForm }))
 );
@@ -32,6 +40,8 @@ const ImportExpenses = lazy(() =>
 );
 
 const migratedComponents: Record<string, React.LazyExoticComponent<React.ComponentType>> = {
+  'dashboard': Dashboard,
+  'new-expense': ExpenseEntry,
   'log-expense': ExpenseForm,
   'import-expenses': ImportExpenses,
 };

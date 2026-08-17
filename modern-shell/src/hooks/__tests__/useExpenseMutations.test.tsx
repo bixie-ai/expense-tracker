@@ -44,10 +44,11 @@ describe('useExpenseMutations', () => {
 
     act(() => {
       result.current.updateExpense('expense-1', {
-        name: 'Coffee',
+        name: 'Morning coffee',
         amount: 5.5,
         date: '2024-01-15',
-        category: 'Food',
+        category: 'Dining out',
+        type: 'Cash',
         comments: '',
       });
     });
@@ -56,12 +57,12 @@ describe('useExpenseMutations', () => {
       {
         expenseId: 'expense-1',
         expense: {
-          name: 'Coffee',
+          name: 'Morning coffee',
           amount: 5.5,
           date: '2024-01-15',
-          category: 'Food',
-          comments: '',
+          category: 'Dining out',
           type: 'Manual',
+          comments: '',
         },
       },
       expect.objectContaining({
@@ -104,10 +105,11 @@ describe('useExpenseMutations', () => {
 
     act(() => {
       result.current.updateExpense('expense-1', {
-        name: 'Coffee',
+        name: 'Morning coffee',
         amount: 5.5,
         date: '2024-01-15',
-        category: 'Food',
+        category: 'Dining out',
+        type: 'Credit',
       });
     });
 

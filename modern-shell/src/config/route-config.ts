@@ -9,9 +9,9 @@ export interface RouteEntry {
 
 export const routeConfig: ReadonlyArray<RouteEntry> = [
   { path: 'login', status: 'legacy', angularPath: '/login' },
-  { path: 'dashboard', status: 'legacy', angularPath: '/dashboard' },
+  { path: 'dashboard', status: 'migrated', featureFlag: 'enable_modern_ui_v1' },
   { path: 'settings', status: 'legacy', angularPath: '/settings' },
-  { path: 'new-expense', status: 'legacy', angularPath: '/new-expense' },
+  { path: 'new-expense', status: 'migrated', featureFlag: 'enable_modern_ui_v1' },
   { path: 'log-expense', status: 'migrated', featureFlag: 'log_expense_react' },
   { path: 'import-expenses', status: 'migrated', featureFlag: 'import_expenses_react' },
 ];

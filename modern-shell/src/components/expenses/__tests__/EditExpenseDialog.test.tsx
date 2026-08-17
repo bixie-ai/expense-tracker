@@ -5,11 +5,11 @@ import { Expense } from '../../../types/expense';
 
 const mockExpense: Expense = {
   id: 'expense-1',
-  name: 'Coffee',
+  name: 'Morning coffee',
   amount: 5.5,
   date: '2024-03-15',
-  category: 'Food',
-  type: 'Manual',
+  category: 'Dining out',
+  type: 'Credit',
   comments: 'Morning coffee',
 };
 
@@ -36,7 +36,7 @@ describe('EditExpenseDialog', () => {
 
     expect(screen.getByLabelText('Amount')).toHaveValue(5.5);
     expect(screen.getByLabelText('Date')).toHaveValue('2024-03-15');
-    expect(screen.getByLabelText('Description')).toHaveValue('Coffee');
+    expect(screen.getByLabelText('Description')).toHaveValue('Morning coffee');
     expect(screen.getByLabelText('Comments')).toHaveValue('Morning coffee');
   });
 
@@ -66,16 +66,16 @@ describe('EditExpenseDialog', () => {
     expect(defaultProps.onSubmit).not.toHaveBeenCalled();
   });
 
-  it('should show validation error for empty description', async () => {
+  it('should show validation error for short description', async () => {
     render(<EditExpenseDialog {...defaultProps} />);
 
     const descField = screen.getByLabelText('Description');
-    fireEvent.change(descField, { target: { value: '' } });
+    fireEvent.change(descField, { target: { value: 'ab' } });
 
     fireEvent.click(screen.getByText('Save'));
 
     await waitFor(() => {
-      expect(screen.getByText('Description is required')).toBeInTheDocument();
+      expect(screen.getByText('Name is required (minimum 4 characters)')).toBeInTheDocument();
     });
 
     expect(defaultProps.onSubmit).not.toHaveBeenCalled();
@@ -94,7 +94,8 @@ describe('EditExpenseDialog', () => {
         name: 'Updated Coffee',
         amount: 5.5,
         date: '2024-03-15',
-        category: 'Food',
+        category: 'Dining out',
+        type: 'Credit',
         comments: 'Morning coffee',
       });
     });
