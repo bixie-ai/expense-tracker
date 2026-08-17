@@ -1,138 +1,181 @@
-# About Expense Tracker
+# Expense Tracker
 
-Expense Tracker is a clean and simple responsive web application designed for efficient expense management. Originally developed with Angular 4, the application has been continuously modernized to leverage the latest Angular features and capabilities.
+A dual-frontend expense management application using the **Strangler Fig** migration pattern: a legacy Angular app and a modern React shell running side-by-side against a shared mock backend.
 
-Built following Material Design guidelines, this application provides an intuitive and user-friendly interface for managing personal or business expenses. Feel free to reach out with any feedback.
+## Architecture Overview
 
-## Find app live here
-
-https://expense-tracker-e0028.firebaseapp.com/
-
-## Technologies Used
-
-* Angular 19
-* Firebase
-* AngularFire
-* Angular Material
-* Material Design 3
-* Highcharts
-* Bootstrap Grid System & Utilities Classes
-
-## Key Features
-
-* Authentication & Authorization
-  - User registration and login functionality
-  - Firebase authentication integration
-  - Protected routes with auth guards
-* Dashboard Features
-  - Interactive dashboard with expense summaries
-  - Monthly summary charts
-  - Category summary charts
-  - Data filtering
-  - Bulk editing capabilities for expenses
-  - Tabular view of expenses
-
-* Expense Management
-  - Add new expenses
-  - Edit existing expenses
-  - Delete expenses
-  - Categorize expenses
-  - Track expense sources/payment types
-
-* Settings Management
-  - Customize expense categories
-  - Manage expense source types
-  - User-specific settings persistence
-  - Default categories and types for new users
-
-* Data Import Capabilities
-  - CSV file import functionality
-  - Data validation for imports
-  - Review imported expenses before saving
-  - Bulk import support
-
-* Technical Features
-  - Firebase integration for data storage
-  - Real-time data updates
-  - Responsive Material Design 3 UI
-  - Progressive Web App capabilities
-  - Client-side routing
-  - Lazy-loaded components
-
-## Roadmap for future updates
-
-- [x] Update to Material Design 3
-- [x] Redesign Login/ Registration Page
-- [x] Configurable metadata for expenses.
-- [x] Update Interactive Dashboard with filtering capabilities
-- [ ] Import expenses redesign
-
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Developer Machine                      │
+│                                                          │
+│  ┌──────────────────┐       ┌──────────────────────┐    │
+│  │  Angular App      │       │  React Shell          │    │
+│  │  (src/)           │       │  (modern-shell/)      │    │
+│  │  Port 4201        │       │  Port 5173            │    │
+│  │  ng serve         │       │  npm run dev          │    │
+│  └────────┬─────────┘       └──────────┬───────────┘    │
+│           │                             │                 │
+│           │  ┌──────────────────────┐   │                 │
+│           └──┤  Shared Mock Backend  ├──┘                 │
+│              │  (localStorage-based) │                    │
+│              └──────────────────────┘                    │
+│                                                          │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  Parity Tests (tests/parity/)                     │   │
+│  │  Playwright: visual + structural comparison       │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Both apps use a **localStorage-based mock authentication** system — no real Firebase backend or emulator is needed for local development.
 
-## Code scaffolding
+## Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Requirement | Version | Check |
+|-------------|---------|-------|
+| Node.js | 18+ | `node -v` |
+| npm | 8+ | `npm -v` |
+| Angular CLI | 21+ | `npx ng version` |
 
-```bash
-ng generate component component-name
+## Quick Start: Side-by-Side Development
+
+Follow these steps to run both applications simultaneously for visual parity testing.
+
+```
+┌────────────────────────────────────────────────────────┐
+│  1. Install deps     npm install (root)                 │
+│                      cd modern-shell && npm install     │
+│                                                         │
+│  2. Configure env    modern-shell/.env.development      │
+│                                                         │
+│  3. Start Angular    ng serve --port 4201  (Terminal 1) │
+│                                                         │
+│  4. Start React      npm run dev           (Terminal 2) │
+│                      (from modern-shell/)               │
+│                                                         │
+│  5. Verify           Angular → localhost:4201           │
+│                      React   → localhost:5173           │
+└────────────────────────────────────────────────────────┘
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Step 1: Install Dependencies
 
 ```bash
-ng generate --help
+# Root directory (Angular app)
+npm install
+
+# React shell
+cd modern-shell
+npm install
+cd ..
 ```
 
-## Building
+### Step 2: Configure Environment Variables
 
-To build the project run:
+Create or verify `modern-shell/.env.development`:
 
 ```bash
-ng build
+VITE_API_PROXY_TARGET=http://localhost:4201
+VITE_ANGULAR_BASE_URL=http://localhost:4201
+VITE_FF_LOG_EXPENSE_REACT=true
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+See [modern-shell/README.md](modern-shell/README.md) for the full variable reference.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Step 3: Start the Angular App (Terminal 1)
 
 ```bash
-ng test
+ng serve --port 4201
 ```
 
-## Running end-to-end tests
+The Angular app serves on `http://localhost:4201`.
 
-For end-to-end (e2e) testing, run:
+See [src/README.md](src/README.md) for Angular-specific details.
+
+### Step 4: Start the React Shell (Terminal 2)
 
 ```bash
-ng e2e
+cd modern-shell
+npm run dev
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The React shell serves on `http://localhost:5173` (Vite default) and proxies `/angular` routes to the Angular app at port 4201.
 
-## Additional Resources
+See [modern-shell/README.md](modern-shell/README.md) for React-specific details.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Step 5: Verify Both Apps Are Running
 
-## Steps for deploying to firebase hosting
+| App | URL | Expected |
+|-----|-----|----------|
+| Angular | http://localhost:4201 | Login page loads with Material Design UI |
+| React | http://localhost:5173 | Login page loads with MUI-based UI |
 
-`ng build --prod`
+Both apps share the same localStorage-based mock auth — logging in on either app uses the same local credentials.
 
-Make sure you have firebase tools installed
-`npm install -g firebase-tools`
+## Running Parity Tests
 
-If firebase is not initialized
-`firebase init`
+With both apps running:
 
-Last but not least deploy it to firebase
-`firebase deploy`
+```bash
+npx playwright test --config=tests/parity/playwright.config.ts
+```
+
+The parity tests expect:
+- Angular at `http://localhost:4200` (override with `ANGULAR_URL` env var)
+- React at `http://localhost:5173` (override with `REACT_URL` env var)
+
+To match the test defaults, start Angular on port 4200 instead:
+
+```bash
+# For parity tests specifically:
+ng serve --port 4200
+```
+
+Or override the test URLs:
+
+```bash
+ANGULAR_URL=http://localhost:4201 REACT_URL=http://localhost:5173 \
+  npx playwright test --config=tests/parity/playwright.config.ts
+```
+
+## Project Structure
+
+```
+expense-tracker/
+├── src/                    # Angular application (legacy)
+├── modern-shell/           # React/Vite application (migration target)
+├── tests/parity/           # Playwright visual parity tests
+├── public/                 # Angular static assets
+├── angular.json            # Angular workspace config
+├── firebase.json           # Firebase hosting config
+└── package.json            # Root (Angular) dependencies & scripts
+```
+
+## Available Scripts (Root)
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start Angular dev server (port 4200) |
+| `ng serve --port 4201` | Start Angular on alternate port |
+| `npm run build` | Production build (Angular) |
+| `npm test` | Run Angular unit tests (Karma) |
+| `npm run test:parity` | Run Playwright parity tests |
+| `npm run lint` | Lint Angular source |
+
+## Technologies
+
+| Layer | Angular (src/) | React (modern-shell/) |
+|-------|---------------|----------------------|
+| Framework | Angular 21 | React 18 + Vite |
+| UI Library | Angular Material (MD3) | MUI 9 |
+| State | RxJS + Services | React Query + Context |
+| Auth | Mock (localStorage) | Mock (localStorage) |
+| Testing | Karma/Jasmine | Vitest + Testing Library |
+
+## Troubleshooting
+
+**Port conflict on 4200**: Both apps default to port 4200. For side-by-side development, always start Angular on 4201 and let Vite use 5173.
+
+**Proxy errors in React shell**: Ensure Angular is running on the port specified in `VITE_API_PROXY_TARGET`.
+
+**Parity tests fail to connect**: Verify both apps are running on the expected ports before running tests. Check `tests/parity/playwright.config.ts` for the current URL defaults.
