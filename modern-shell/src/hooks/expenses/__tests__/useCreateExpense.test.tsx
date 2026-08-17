@@ -38,7 +38,7 @@ describe('useCreateExpense', () => {
 
   it('should call expenseRepository.create with userId and mapped expense data', async () => {
     const { queryClient, wrapper } = createWrapper();
-    const mockResult = { id: 'new-1', name: 'Lunch', amount: 12.5, date: '2024-03-15', category: 'Food', type: 'Manual' };
+    const mockResult = { id: 'new-1', name: 'Lunch', amount: 12.5, date: '2024-03-15', category: 'Dining out', type: 'Credit' };
     vi.mocked(expenseRepository.create).mockResolvedValue(mockResult);
 
     const { result } = renderHook(() => useCreateExpense(), { wrapper });
@@ -47,7 +47,8 @@ describe('useCreateExpense', () => {
       name: 'Lunch',
       amount: 12.5,
       date: '2024-03-15',
-      category: 'Food',
+      category: 'Dining out',
+      type: 'Credit',
       comments: 'Team lunch',
     });
 
@@ -57,8 +58,8 @@ describe('useCreateExpense', () => {
       name: 'Lunch',
       amount: 12.5,
       date: '2024-03-15',
-      category: 'Food',
-      type: 'Manual',
+      category: 'Dining out',
+      type: 'Credit',
       comments: 'Team lunch',
     });
     queryClient.clear();
@@ -66,7 +67,7 @@ describe('useCreateExpense', () => {
 
   it('should invalidate expenses list query on success', async () => {
     const { queryClient, wrapper } = createWrapper();
-    vi.mocked(expenseRepository.create).mockResolvedValue({ id: 'new-1', name: 'Test', amount: 5, date: '2024-01-01', category: 'Other', type: 'Manual' });
+    vi.mocked(expenseRepository.create).mockResolvedValue({ id: 'new-1', name: 'Test', amount: 5, date: '2024-01-01', category: 'Other', type: 'Cash' });
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
     const { result } = renderHook(() => useCreateExpense(), { wrapper });
@@ -76,6 +77,7 @@ describe('useCreateExpense', () => {
       amount: 5,
       date: '2024-01-01',
       category: 'Other',
+      type: 'Cash',
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -97,7 +99,8 @@ describe('useCreateExpense', () => {
       name: 'Test',
       amount: 10,
       date: '2024-01-01',
-      category: 'Food',
+      category: 'Groceries',
+      type: 'Debit',
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -117,7 +120,8 @@ describe('useCreateExpense', () => {
       name: 'Test',
       amount: 10,
       date: '2024-01-01',
-      category: 'Food',
+      category: 'Groceries',
+      type: 'Cash',
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -126,22 +130,23 @@ describe('useCreateExpense', () => {
     queryClient.clear();
   });
 
-  it('should set type to Manual for all created expenses', async () => {
+  it('should pass type from form values', async () => {
     const { queryClient, wrapper } = createWrapper();
-    vi.mocked(expenseRepository.create).mockResolvedValue({ id: 'new-2', name: 'Bus', amount: 3, date: '2024-02-01', category: 'Transport', type: 'Manual' });
+    vi.mocked(expenseRepository.create).mockResolvedValue({ id: 'new-2', name: 'Bus', amount: 3, date: '2024-02-01', category: 'Transportation', type: 'Cash' });
 
     const { result } = renderHook(() => useCreateExpense(), { wrapper });
 
     result.current.mutate({
-      name: 'Bus',
+      name: 'Bus fare',
       amount: 3,
       date: '2024-02-01',
-      category: 'Transport',
+      category: 'Transportation',
+      type: 'Cash',
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(vi.mocked(expenseRepository.create).mock.calls[0][1]).toHaveProperty('type', 'Manual');
+    expect(vi.mocked(expenseRepository.create).mock.calls[0][1]).toHaveProperty('type', 'Cash');
     queryClient.clear();
   });
 });

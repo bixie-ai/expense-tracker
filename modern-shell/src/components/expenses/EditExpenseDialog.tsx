@@ -13,6 +13,7 @@ import {
   Box,
 } from '@mui/material';
 import { expenseSchema, ExpenseFormData, EXPENSE_CATEGORIES } from '../../schemas/expenseSchema';
+import { PAYMENT_TYPES } from '../../core/api/schemas';
 import { Expense } from '../../types/expense';
 
 export interface EditExpenseDialogProps {
@@ -42,6 +43,7 @@ export function EditExpenseDialog({
       amount: 0,
       date: '',
       category: undefined as unknown as ExpenseFormData['category'],
+      type: undefined as unknown as ExpenseFormData['type'],
       comments: '',
     },
   });
@@ -56,6 +58,7 @@ export function EditExpenseDialog({
             ? expense.date
             : expense.date.toISOString().split('T')[0],
         category: expense.category as ExpenseFormData['category'],
+        type: (expense.type as ExpenseFormData['type']) ?? 'Credit',
         comments: expense.comments ?? '',
       });
     }
@@ -142,6 +145,32 @@ export function EditExpenseDialog({
                 {EXPENSE_CATEGORIES.map((cat) => (
                   <MenuItem key={cat} value={cat}>
                     {cat}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                value={field.value ?? ''}
+                select
+                label="Payment Source"
+                slotProps={{
+                  htmlInput: { 'aria-label': 'Payment Source' },
+                }}
+                error={!!errors.type}
+                helperText={errors.type?.message}
+                fullWidth
+                required
+              >
+                {PAYMENT_TYPES.map((t) => (
+                  <MenuItem key={t} value={t}>
+                    {t}
                   </MenuItem>
                 ))}
               </TextField>

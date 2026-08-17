@@ -16,7 +16,7 @@ export function useCreateExpense() {
         amount: values.amount,
         date: values.date,
         category: values.category,
-        type: 'Manual',
+        type: values.type,
         comments: values.comments,
       }),
     onSuccess: () => {

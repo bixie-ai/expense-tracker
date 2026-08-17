@@ -3,10 +3,11 @@ import { expenseSchema, EXPENSE_CATEGORIES } from '../expenseSchema';
 
 describe('expenseSchema', () => {
   const validData = {
-    name: 'Coffee',
+    name: 'Morning coffee',
     amount: 5.5,
     date: '2024-03-15',
-    category: 'Food' as const,
+    category: 'Dining out' as const,
+    type: 'Cash' as const,
     comments: 'Morning coffee',
   };
 
@@ -24,12 +25,12 @@ describe('expenseSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject empty name', () => {
-    const result = expenseSchema.safeParse({ ...validData, name: '' });
+  it('should reject short name', () => {
+    const result = expenseSchema.safeParse({ ...validData, name: 'ab' });
     expect(result.success).toBe(false);
     if (!result.success) {
       const nameError = result.error.issues.find((i) => i.path.includes('name'));
-      expect(nameError?.message).toBe('Description is required');
+      expect(nameError?.message).toBe('Name is required (minimum 4 characters)');
     }
   });
 

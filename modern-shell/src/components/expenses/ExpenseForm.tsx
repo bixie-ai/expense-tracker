@@ -15,6 +15,7 @@ import {
   ExpenseFormSchema,
   ExpenseFormValues,
   EXPENSE_CATEGORIES,
+  PAYMENT_TYPES,
 } from '../../core/api/schemas';
 import { useCreateExpense } from '../../hooks/expenses/useCreateExpense';
 
@@ -40,6 +41,7 @@ export function ExpenseForm() {
       amount: undefined as unknown as number,
       date: getToday(),
       category: undefined as unknown as ExpenseFormValues['category'],
+      type: undefined as unknown as ExpenseFormValues['type'],
       comments: '',
     },
   });
@@ -135,6 +137,32 @@ export function ExpenseForm() {
               {EXPENSE_CATEGORIES.map((cat) => (
                 <MenuItem key={cat} value={cat}>
                   {cat}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              value={field.value ?? ''}
+              select
+              label="Payment Source"
+              slotProps={{
+                htmlInput: { 'aria-label': 'Payment Source' },
+              }}
+              error={!!errors.type}
+              helperText={errors.type?.message}
+              fullWidth
+              required
+            >
+              {PAYMENT_TYPES.map((t) => (
+                <MenuItem key={t} value={t}>
+                  {t}
                 </MenuItem>
               ))}
             </TextField>

@@ -57,11 +57,15 @@ describe('route-config', () => {
 
   describe('isLegacyRoute', () => {
     it('returns true for a known legacy path', () => {
-      expect(isLegacyRoute('dashboard')).toBe(true);
+      expect(isLegacyRoute('settings')).toBe(true);
     });
 
     it('returns true for a legacy path with leading slash', () => {
-      expect(isLegacyRoute('/dashboard')).toBe(true);
+      expect(isLegacyRoute('/settings')).toBe(true);
+    });
+
+    it('returns false for a migrated path', () => {
+      expect(isLegacyRoute('dashboard')).toBe(false);
     });
 
     it('returns false for an unknown path', () => {

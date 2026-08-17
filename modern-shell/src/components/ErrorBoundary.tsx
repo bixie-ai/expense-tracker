@@ -1,4 +1,7 @@
 import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 interface ErrorBoundaryProps {
   fallback?: React.ReactNode;
@@ -23,15 +26,28 @@ export class ErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
+  private handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
   render(): React.ReactNode {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
-        this.props.fallback ?? (
-          <div role="alert">
-            <h2>Something went wrong</h2>
-            <p>{this.state.error?.message ?? 'An unexpected error occurred.'}</p>
-          </div>
-        )
+        <Box role="alert" sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Something went wrong
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            {this.state.error?.message ?? 'An unexpected error occurred.'}
+          </Typography>
+          <Button variant="contained" onClick={this.handleRetry} aria-label="Retry">
+            Retry
+          </Button>
+        </Box>
       );
     }
 

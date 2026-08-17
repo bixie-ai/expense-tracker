@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -20,6 +21,7 @@ import { FooterLinks } from './FooterLinks';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+  { path: '/new-expense', label: 'New Expense', icon: <AddCircleOutlineIcon /> },
   { path: '/settings', label: 'Settings', icon: <SettingsIcon /> },
 ] as const;
 

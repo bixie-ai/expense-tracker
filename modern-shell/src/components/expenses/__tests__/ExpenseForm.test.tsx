@@ -38,6 +38,7 @@ describe('ExpenseForm', () => {
     expect(screen.getByLabelText('Amount')).toBeInTheDocument();
     expect(screen.getByLabelText('Date')).toBeInTheDocument();
     expect(screen.getByLabelText('Category')).toBeInTheDocument();
+    expect(screen.getByLabelText('Payment Source')).toBeInTheDocument();
     expect(screen.getByLabelText('Description')).toBeInTheDocument();
     expect(screen.getByLabelText('Comments')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Submit expense' })).toBeInTheDocument();
@@ -61,7 +62,7 @@ describe('ExpenseForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Submit expense' }));
 
     await waitFor(() => {
-      expect(screen.getByText('Description is required')).toBeInTheDocument();
+      expect(screen.getByText('Name is required (minimum 4 characters)')).toBeInTheDocument();
     });
 
     expect(mockMutate).not.toHaveBeenCalled();
@@ -101,7 +102,7 @@ describe('ExpenseForm', () => {
     render(<ExpenseForm />, { wrapper: createWrapper() });
 
     fireEvent.change(screen.getByLabelText('Amount'), { target: { value: '10' } });
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Test' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Test expense' } });
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit expense' }));
 
@@ -120,24 +121,31 @@ describe('ExpenseForm', () => {
     render(<ExpenseForm />, { wrapper: createWrapper() });
 
     fireEvent.change(screen.getByLabelText('Amount'), { target: { value: '25.50' } });
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Groceries' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Weekly groceries' } });
     fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2024-03-15' } });
 
     // Select category via the MUI select
     const categorySelect = screen.getByLabelText('Category');
     fireEvent.mouseDown(categorySelect);
-    const foodOption = await screen.findByRole('option', { name: 'Food' });
-    fireEvent.click(foodOption);
+    const groceriesOption = await screen.findByRole('option', { name: 'Groceries' });
+    fireEvent.click(groceriesOption);
+
+    // Select payment type
+    const paymentSelect = screen.getByLabelText('Payment Source');
+    fireEvent.mouseDown(paymentSelect);
+    const creditOption = await screen.findByRole('option', { name: 'Credit' });
+    fireEvent.click(creditOption);
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit expense' }));
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith(
         {
-          name: 'Groceries',
+          name: 'Weekly groceries',
           amount: 25.5,
           date: '2024-03-15',
-          category: 'Food',
+          category: 'Groceries',
+          type: 'Credit',
           comments: '',
         },
         expect.objectContaining({
@@ -156,13 +164,18 @@ describe('ExpenseForm', () => {
     render(<ExpenseForm />, { wrapper: createWrapper() });
 
     fireEvent.change(screen.getByLabelText('Amount'), { target: { value: '10' } });
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Coffee' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Morning coffee' } });
     fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2024-03-15' } });
 
     const categorySelect = screen.getByLabelText('Category');
     fireEvent.mouseDown(categorySelect);
-    const option = await screen.findByRole('option', { name: 'Food' });
+    const option = await screen.findByRole('option', { name: 'Dining out' });
     fireEvent.click(option);
+
+    const paymentSelect = screen.getByLabelText('Payment Source');
+    fireEvent.mouseDown(paymentSelect);
+    const payOption = await screen.findByRole('option', { name: 'Cash' });
+    fireEvent.click(payOption);
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit expense' }));
 
@@ -179,13 +192,18 @@ describe('ExpenseForm', () => {
     render(<ExpenseForm />, { wrapper: createWrapper() });
 
     fireEvent.change(screen.getByLabelText('Amount'), { target: { value: '10' } });
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Coffee' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Morning coffee' } });
     fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2024-03-15' } });
 
     const categorySelect = screen.getByLabelText('Category');
     fireEvent.mouseDown(categorySelect);
-    const option = await screen.findByRole('option', { name: 'Food' });
+    const option = await screen.findByRole('option', { name: 'Dining out' });
     fireEvent.click(option);
+
+    const paymentSelect = screen.getByLabelText('Payment Source');
+    fireEvent.mouseDown(paymentSelect);
+    const payOption = await screen.findByRole('option', { name: 'Debit' });
+    fireEvent.click(payOption);
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit expense' }));
 
