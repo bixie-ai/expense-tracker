@@ -49,3 +49,5 @@ Thumbs.db
 tests/parity/test-results/
 tests/parity/playwright-report/
 tests/parity/blob-report/
+tests/parity/html-report/
+tests/parity/snapshots/
