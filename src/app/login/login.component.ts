@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { UserService } from '@core/services/user.service';
 import { ResponsiveService } from '@shared/services/responsive.service';
-import firebase from 'firebase/compat/app';
 import { SignUpComponent } from './sign-up/sign-up.component';
 
 @Component({
@@ -65,15 +64,16 @@ export class LoginComponent {
     this.authService
       .logIn(email, password)
       .then((data) => {
-        this.userService.setUser(data.user as firebase.User);
+        this.userService.setUser(data.user);
+        this.userService.setUserId(data.user.uid);
         this.stopLoading();
         this.snackBar.open('Login Successful!', '', { duration: 2000 });
         this.onSuccessfulLogin();
       })
       .catch((e) => {
         this.stopLoading();
-        console.warn('Catches object set:' + e.message);
-        this.snackBar.open(e.message, 'ok', { duration: 4000 });
+        const message = e instanceof Error ? e.message : 'Login failed';
+        this.snackBar.open(message, 'ok', { duration: 4000 });
       });
   }
 

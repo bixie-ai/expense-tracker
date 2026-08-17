@@ -1,4 +1,14 @@
-import { User as FirebaseUser } from 'firebase/auth';
+export interface MockUserMetadata {
+  creationTime: string;
+  lastSignInTime: string;
+}
+
+export interface MockUser {
+  uid: string;
+  email: string;
+  displayName: string | null;
+  metadata: MockUserMetadata;
+}
 
 export interface UserDetails {
   firstName: string;
@@ -6,7 +16,7 @@ export interface UserDetails {
 }
 
 export interface AuthContextType {
-  user: FirebaseUser | null;
+  user: MockUser | null;
   userDetails: UserDetails | null;
   loading: boolean;
   error: string | null;

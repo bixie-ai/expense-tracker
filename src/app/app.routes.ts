@@ -1,11 +1,7 @@
-import { redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
-import { AngularFireAuthGuard } from '@angular/fire/compat/auth-guard';
 import { Routes } from '@angular/router';
 import { ExpenseFilterControlsComponent } from '@core/components/expense-filter-controls/expense-filter-controls.component';
 import { CloseAndRedirectComponent } from '@core/components/close-and-redirect/close-and-redirect.component';
-
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
-const redirectLoggedInToItems = () => redirectLoggedInTo(['dashboard']);
+import { mockAuthGuard, mockLoginGuard } from '@core/guards/mock-auth.guard';
 
 export const routes: Routes = [
   {
@@ -17,17 +13,15 @@ export const routes: Routes = [
     path: 'login',
     pathMatch: 'full',
     loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent),
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectLoggedInToItems },
+    canActivate: [mockLoginGuard],
   },
   {
     path: 'dashboard',
     pathMatch: 'full',
     loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
-    canActivate: [AngularFireAuthGuard],
+    canActivate: [mockAuthGuard],
     title: 'Dashboard',
     data: {
-      authGuardPipe: redirectUnauthorizedToLogin,
       title: 'Dashboard',
       pageActions: ExpenseFilterControlsComponent,
     },
@@ -37,9 +31,8 @@ export const routes: Routes = [
     pathMatch: 'full',
     loadComponent: () =>
       import('./expense-settings/expense-settings.component').then((m) => m.ExpenseSettingsComponent),
-    canActivate: [AngularFireAuthGuard],
+    canActivate: [mockAuthGuard],
     data: {
-      authGuardPipe: redirectUnauthorizedToLogin,
       title: 'Settings',
       pageActions: CloseAndRedirectComponent,
       fixedContainer: true,
@@ -49,9 +42,8 @@ export const routes: Routes = [
     path: 'new-expense',
     pathMatch: 'full',
     loadComponent: () => import('./log-expense/log-expense.component').then((m) => m.LogExpenseComponent),
-    canActivate: [AngularFireAuthGuard],
+    canActivate: [mockAuthGuard],
     data: {
-      authGuardPipe: redirectUnauthorizedToLogin,
       title: 'New Expense',
       pageActions: CloseAndRedirectComponent,
       fixedContainer: true,
@@ -62,9 +54,8 @@ export const routes: Routes = [
     path: 'import-expenses',
     pathMatch: 'full',
     loadComponent: () => import('./import-expenses/import-expenses.component').then((m) => m.ImportExpensesComponent),
-    canActivate: [AngularFireAuthGuard],
+    canActivate: [mockAuthGuard],
     data: {
-      authGuardPipe: redirectUnauthorizedToLogin,
       title: 'Import Expenses',
       pageActions: CloseAndRedirectComponent,
       fixedContainer: true,

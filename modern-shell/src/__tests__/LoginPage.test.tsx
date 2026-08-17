@@ -135,7 +135,23 @@ describe('LoginPage', () => {
     });
 
     it('should display error message on login failure', async () => {
-      mockLogIn.mockRejectedValueOnce(new Error('auth/user-not-found'));
+      mockLogIn.mockRejectedValueOnce(new Error('Login failed'));
+      renderLoginPage();
+
+      fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toHaveTextContent('Login failed');
+      });
+    });
+
+    it('should display generic error for non-Error objects', async () => {
+      mockLogIn.mockRejectedValueOnce('something went wrong');
       renderLoginPage();
 
       fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@test.com' } });
@@ -147,24 +163,8 @@ describe('LoginPage', () => {
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toHaveTextContent(
-          'No account found with this email address.'
+          'An unexpected error occurred. Please try again.'
         );
-      });
-    });
-
-    it('should display friendly error for invalid-credential', async () => {
-      mockLogIn.mockRejectedValueOnce(new Error('auth/invalid-credential'));
-      renderLoginPage();
-
-      fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrongpass' } });
-
-      await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
-      });
-
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toHaveTextContent('Invalid email or password.');
       });
     });
   });
@@ -201,7 +201,7 @@ describe('LoginPage', () => {
     });
 
     it('should display error on sign up failure', async () => {
-      mockSignUp.mockRejectedValueOnce(new Error('auth/email-already-in-use'));
+      mockSignUp.mockRejectedValueOnce(new Error('Registration failed'));
       renderLoginPage();
 
       await act(async () => {
@@ -216,14 +216,12 @@ describe('LoginPage', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByRole('alert')).toHaveTextContent(
-          'An account with this email already exists.'
-        );
+        expect(screen.getByRole('alert')).toHaveTextContent('Registration failed');
       });
     });
 
     it('should clear error when switching between login and sign up', async () => {
-      mockLogIn.mockRejectedValueOnce(new Error('auth/user-not-found'));
+      mockLogIn.mockRejectedValueOnce(new Error('Login failed'));
       renderLoginPage();
 
       fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@test.com' } });
