@@ -12,33 +12,6 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const FIREBASE_ERROR_MESSAGES: Record<string, string> = {
-  'auth/user-not-found': 'No account found with this email address.',
-  'auth/wrong-password': 'Incorrect password. Please try again.',
-  'auth/invalid-email': 'Please enter a valid email address.',
-  'auth/user-disabled': 'This account has been disabled.',
-  'auth/too-many-requests': 'Too many attempts. Please try again later.',
-  'auth/email-already-in-use': 'An account with this email already exists.',
-  'auth/weak-password': 'Password is too weak. Please use at least 6 characters.',
-  'auth/invalid-credential': 'Invalid email or password.',
-};
-
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    const code = error.message;
-    if (FIREBASE_ERROR_MESSAGES[code]) {
-      return FIREBASE_ERROR_MESSAGES[code];
-    }
-    const match = code.match(/\(auth\/([^)]+)\)/);
-    if (match) {
-      const firebaseCode = `auth/${match[1]}`;
-      return FIREBASE_ERROR_MESSAGES[firebaseCode] || `Authentication error: ${firebaseCode}`;
-    }
-    return error.message;
-  }
-  return 'An unexpected error occurred. Please try again.';
-}
-
 export function LoginPage() {
   const { logIn, signUp, loading } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +39,8 @@ export function LoginPage() {
       }
       navigate(from, { replace: true });
     } catch (e) {
-      setAuthError(getErrorMessage(e));
+      const message = e instanceof Error ? e.message : 'An unexpected error occurred. Please try again.';
+      setAuthError(message);
     }
   }
 

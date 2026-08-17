@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, RouterModule } from '@angular/router';
 import { LayoutComponent } from './core/components/layout/layout.component';
 import { UserService } from './core/services/user.service';
@@ -14,17 +12,13 @@ import { UserService } from './core/services/user.service';
 export class AppComponent {
   constructor(
     private router: Router,
-    private afAuth: AngularFireAuth,
     private userService: UserService,
   ) {
-    this.afAuth.authState.pipe(takeUntilDestroyed()).subscribe((authData) => {
-      if (authData && authData.email) {
-        this.userService.setUserId(authData.uid);
-        this.userService.setUser(authData);
-        this.router.navigate(['/dashboard']).then();
-      } else {
-        this.router.navigate(['/login']).then();
-      }
-    });
+    const user = this.userService.getUser();
+    if (user) {
+      this.router.navigate(['/dashboard']).then();
+    } else {
+      this.router.navigate(['/login']).then();
+    }
   }
 }

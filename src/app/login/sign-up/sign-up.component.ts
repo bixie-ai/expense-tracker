@@ -1,5 +1,4 @@
-import { Component, Input, WritableSignal } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { Component, inject, Input, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
@@ -8,9 +7,9 @@ import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import firebase from 'firebase/compat/app';
 import { User } from '../../core/interfaces/user-model';
 import { AuthService } from '../../core/services/auth.service';
+import { DatabaseService } from '../../core/services/database.service';
 import { UserService } from '../../core/services/user.service';
 import { defaultExpenseCategories } from '../../shared/constants/expense-constants';
 
@@ -29,16 +28,13 @@ export class SignUpComponent {
     password: '',
   };
   isLoading = false;
-  user: firebase.database.Reference | undefined;
   defaultExpenses: string[] = defaultExpenseCategories;
 
-  constructor(
-    public authService: AuthService,
-    public snackBar: MatSnackBar,
-    private router: Router,
-    public db: AngularFireDatabase,
-    private userService: UserService,
-  ) {}
+  private authService: AuthService = inject(AuthService);
+  private snackBar: MatSnackBar = inject(MatSnackBar);
+  private router: Router = inject(Router);
+  private db: DatabaseService = inject(DatabaseService);
+  private userService: UserService = inject(UserService);
 
   checkForm(valid: boolean | null) {
     if (valid) {
@@ -62,7 +58,8 @@ export class SignUpComponent {
       })
       .catch((e) => {
         this.isLoading = false;
-        this.openSnackBarError(e.message);
+        const message = e instanceof Error ? e.message : 'Registration failed';
+        this.openSnackBarError(message);
       });
   }
 
@@ -79,15 +76,14 @@ export class SignUpComponent {
   }
 
   private setUserInformation(userId: string) {
-    this.user = this.db.database.ref(`users/${userId}`);
-    this.user
-      .set({
-        firstName: this.currentUser.firstName,
-        lastName: this.currentUser.lastName,
-        email: this.currentUser.email,
-        categories: this.defaultExpenses,
-        expenses: [],
+    this.db
+      .updateUserDetails(userId, {
+        firstName: this.currentUser.firstName ?? '',
+        lastName: this.currentUser.lastName ?? '',
       })
-      .catch((error) => this.openSnackBarError(error.message));
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : 'Failed to save user details';
+        this.openSnackBarError(message);
+      });
   }
 }
