@@ -1,0 +1,72 @@
+{
+  "user": {
+    "uid": "parity-test-uid-001",
+    "email": "parity-test@expense-tracker.test",
+    "displayName": "Parity Tester",
+    "photoURL": null
+  },
+  "expenses": [
+    {
+      "id": "exp-001",
+      "amount": 42.5,
+      "description": "Office Supplies",
+      "category": "Business",
+      "date": "2026-01-15",
+      "type": "expense"
+    },
+    {
+      "id": "exp-002",
+      "amount": 125.0,
+      "description": "Monthly Internet",
+      "category": "Utilities",
+      "date": "2026-01-10",
+      "type": "expense"
+    },
+    {
+      "id": "exp-003",
+      "amount": 18.75,
+      "description": "Lunch Meeting",
+      "category": "Food",
+      "date": "2026-01-12",
+      "type": "expense"
+    },
+    {
+      "id": "exp-004",
+      "amount": 350.0,
+      "description": "Conference Ticket",
+      "category": "Education",
+      "date": "2026-01-08",
+      "type": "expense"
+    },
+    {
+      "id": "exp-005",
+      "amount": 65.0,
+      "description": "Taxi to Airport",
+      "category": "Transport",
+      "date": "2026-01-05",
+      "type": "expense"
+    }
+  ],
+  "categories": [
+    "Business",
+    "Utilities",
+    "Food",
+    "Education",
+    "Transport",
+    "Entertainment",
+    "Health",
+    "Other"
+  ],
+  "settings": {
+    "currency": "USD",
+    "dateFormat": "MM/DD/YYYY",
+    "monthlyBudget": 2000
+  },
+  "routes": [
+    { "path": "/login", "name": "Login" },
+    { "path": "/dashboard", "name": "Dashboard" },
+    { "path": "/settings", "name": "Settings" },
+    { "path": "/new-expense", "name": "New Expense" },
+    { "path": "/import-expenses", "name": "Import Expenses" }
+  ]
+}
